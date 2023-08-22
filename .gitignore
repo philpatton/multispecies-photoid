@@ -1,5 +1,18 @@
 result/**
 submission/**
+input/test_images/**
+input/train_images/**
+input/fullbody_test.csv 
+input/fullbody_train.csv 
+input/sample_submission.csv
+input/test_backfin.csv 
+input/test2.csv 
+input/train.csv
+input/train_backfin.csv 
+input/train2.csv 
+input/yolov5_test.csv 
+input/yolov5_train.csv
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -28,6 +41,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.DS_Store
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
