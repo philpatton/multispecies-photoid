@@ -238,16 +238,12 @@ class SphereClassifier(LightningModule):
     #         np.savez_compressed(self.test_results_fp, **epoch_results)
 
     # very uncertain about this change!
-
     def on_test_epoch_end(self) -> None:
         if self.trainer.global_rank == 0:
             epoch_results: Dict[str, np.ndarray] = {}
             outputs = self.results_dict
             for key in outputs.keys():
-                if torch.cuda.device_count() > 1:
-                    result = torch.cat([x[key] for x in outputs], dim=1).flatten(end_dim=1)
-                else:
-                    result = torch.cat([x[key] for x in outputs], dim=0)
+                result = outputs[key]
                 epoch_results[key] = result.detach().cpu().numpy()
             np.savez_compressed(self.test_results_fp, **epoch_results)
 def train(
