@@ -82,9 +82,11 @@ class WhaleDataModule(LightningDataModule):
 
     def val_dataloader(self):
         if self.cfg.n_splits == -1:
-            return None
+            val_df = self.all_df.iloc[:self.cfg.batch_size]
+        else:
+            val_df = self.val_df
         return DataLoader(
-            self.get_dataset(self.val_df, False),
+            self.get_dataset(val_df, False),
             batch_size=self.cfg.batch_size,
             shuffle=False,
             num_workers=2,
