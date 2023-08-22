@@ -2,7 +2,7 @@ batch_size: 128
 image_size:
 - 128
 - 128
-max_epochs: 5
+max_epochs: 2
 model_name: resnet18d
 out_indices:
 - 3
