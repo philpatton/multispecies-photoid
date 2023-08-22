@@ -281,7 +281,7 @@ def train(
         max_epochs=cfg["max_epochs"],
         logger=loggers,
         callbacks=callbacks,
-        precision=16,
+        precision='16-mixed',
         sync_batchnorm=True,
     )
     ckpt_path = f"{out_dir}/last.ckpt"
