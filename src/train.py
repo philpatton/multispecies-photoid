@@ -210,7 +210,7 @@ class SphereClassifier(LightningModule):
         feat2 = self.get_feat(x.flip(3))
         out2, out_species2 = self.head_id(feat2), self.head_species(feat2)
         pred_logit, pred_idx = ((out1 + out2) / 2).cpu().sort(descending=True)
-        return {
+        results_dict = {
             "original_index": batch["original_index"],
             "label": batch["label"],
             "label_species": batch["label_species"],
@@ -220,20 +220,34 @@ class SphereClassifier(LightningModule):
             "embed_features1": feat1.cpu(),
             "embed_features2": feat2.cpu(),
         }
+        self.results_dict = results_dict
+        return results_dict
 
-    def test_epoch_end(self, outputs: List[Dict[str, torch.Tensor]]):
-        outputs = self.all_gather(outputs)
+    # def test_epoch_end(self, outputs: List[Dict[str, torch.Tensor]]):
+    #     outputs = self.all_gather(outputs)
+    #     if self.trainer.global_rank == 0:
+    #         epoch_results: Dict[str, np.ndarray] = {}
+    #         for key in outputs[0].keys():
+    #             if torch.cuda.device_count() > 1:
+    #                 result = torch.cat([x[key] for x in outputs], dim=1).flatten(end_dim=1)
+    #             else:
+    #                 result = torch.cat([x[key] for x in outputs], dim=0)
+    #             epoch_results[key] = result.detach().cpu().numpy()
+    #         np.savez_compressed(self.test_results_fp, **epoch_results)
+
+    # very uncertain about this change!
+
+    def on_test_epoch_end(self) -> None:
         if self.trainer.global_rank == 0:
             epoch_results: Dict[str, np.ndarray] = {}
-            for key in outputs[0].keys():
+            outputs = self.results_dict
+            for key in outputs.keys():
                 if torch.cuda.device_count() > 1:
                     result = torch.cat([x[key] for x in outputs], dim=1).flatten(end_dim=1)
                 else:
                     result = torch.cat([x[key] for x in outputs], dim=0)
                 epoch_results[key] = result.detach().cpu().numpy()
             np.savez_compressed(self.test_results_fp, **epoch_results)
-
-
 def train(
     df: pd.DataFrame,
     args: argparse.Namespace,
