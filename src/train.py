@@ -278,6 +278,13 @@ def train(
         callbacks.append(PyTorchLightningPruningCallback(optuna_trial, "val/mapNone"))
     if args.save_checkpoint:
         callbacks.append(ModelCheckpoint(out_dir, save_last=True, save_top_k=0))
+    
+    # ignore validation loop if fold==-1
+    if fold == -1:
+        limit_val_batches = 0.0
+    else:
+        limit_val_batches = 1.0
+
     trainer = Trainer(
         accelerator='gpu',
         max_epochs=cfg["max_epochs"],
@@ -285,6 +292,7 @@ def train(
         callbacks=callbacks,
         precision='16-mixed',
         sync_batchnorm=True,
+        limit_val_batches=limit_val_batches
     )
     ckpt_path = f"{out_dir}/last.ckpt"
     if not os.path.exists(ckpt_path) or not args.load_snapshot:
