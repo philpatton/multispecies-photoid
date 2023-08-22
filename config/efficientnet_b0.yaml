@@ -1,7 +1,7 @@
 batch_size: 128
 image_size:
-- 224
-- 224
+- 128
+- 128
 max_epochs: 1
 model_name: tf_efficientnet_b0_ns
 out_indices:
