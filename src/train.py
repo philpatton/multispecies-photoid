@@ -308,6 +308,7 @@ def train(
 
 
 def main():
+    torch.set_float32_matmul_precision('medium')
     args = parse()
     warnings.filterwarnings("ignore", ".*does not have many workers.*")
     cfg = load_config(args.config_path, "config/default.yaml")
