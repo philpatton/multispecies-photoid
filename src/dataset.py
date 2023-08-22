@@ -47,7 +47,14 @@ class WhaleDataset(Dataset):
                 A.ToGray(p=aug.p_gray),
                 A.GaussianBlur(blur_limit=(3, 7), p=aug.p_blur),
                 A.GaussNoise(p=aug.p_noise),
-                A.Downscale(scale_min=0.5, scale_max=0.5, p=aug.p_downscale),
+                A.Downscale(
+                    scale_min=0.5, 
+                    scale_max=0.5, 
+                    p=aug.p_downscale,
+                    interpolation=dict(
+                        downscale=cv2.INTER_AREA, upscale=cv2.INTER_AREA
+                    )
+                ),
                 A.RandomGridShuffle(grid=(2, 2), p=aug.p_shuffle),
                 A.Posterize(p=aug.p_posterize),
                 A.RandomBrightnessContrast(p=aug.p_bright_contrast),
