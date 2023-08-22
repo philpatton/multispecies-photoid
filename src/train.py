@@ -263,7 +263,7 @@ def train(
     if args.save_checkpoint:
         callbacks.append(ModelCheckpoint(out_dir, save_last=True, save_top_k=0))
     trainer = Trainer(
-        gpus=torch.cuda.device_count(),
+        accelerator='gpu',
         max_epochs=cfg["max_epochs"],
         logger=loggers,
         callbacks=callbacks,
