@@ -272,8 +272,8 @@ def train(
     callbacks = [LearningRateMonitor("epoch")]
     if optuna_trial is not None:
         callbacks.append(PyTorchLightningPruningCallback(optuna_trial, "val/mapNone"))
-    if args.save_checkpoint:
-        callbacks.append(ModelCheckpoint(out_dir, save_last=True, save_top_k=0))
+    # if args.save_checkpoint:
+    #     callbacks.append(ModelCheckpoint(out_dir, save_last=True, save_top_k=0))
     
     # ignore validation loop if fold==-1
     if fold == -1:
@@ -288,7 +288,9 @@ def train(
         callbacks=callbacks,
         precision='16-mixed',
         sync_batchnorm=True,
-        limit_val_batches=limit_val_batches
+        limit_val_batches=limit_val_batches,
+        enable_checkpointing=True,
+        default_root_dir=out_dir
     )
     ckpt_path = f"{out_dir}/last.ckpt"
     if not os.path.exists(ckpt_path) or not args.load_snapshot:
