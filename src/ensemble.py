@@ -113,7 +113,7 @@ def make_submission(
         threshold = binary_search_threshold(cfg.num_classes, out, new_ratio)
         print(f"new_ratio: {new_ratio}, selected threshold: {threshold}")
         out_new = torch.cat([out, torch.full((out.shape[0], 1), threshold, device=out.device)], dim=1)
-        top5 = out_new.topk(5)[1]
+        top10 = out_new.topk(10)[1]
 
         # make csv
         label_encoder = preprocessing.LabelEncoder()
@@ -126,7 +126,7 @@ def make_submission(
             )
 
         df = pd.read_csv(f"{args.in_base_dir}/sample_submission.csv")
-        df["predictions"] = [make_str(id_list) for id_list in top5]
+        df["predictions"] = [make_str(id_list) for id_list in top10]
         df.to_csv(f"submission/{args.out_prefix}-{new_ratio}-{threshold}.csv", index=False, columns=["image", "predictions"])
 
     # generate pseudo label
