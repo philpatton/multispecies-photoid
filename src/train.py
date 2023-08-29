@@ -110,6 +110,7 @@ class SphereClassifier(LightningModule):
             cfg = Config(cfg)
         self.save_hyperparameters(cfg, ignore=["id_class_nums", "species_class_nums"])
         self.test_results_fp = None
+        self.test_step_outputs = []
 
         # NN architecture
         self.backbone = timm.create_model(
@@ -222,11 +223,11 @@ class SphereClassifier(LightningModule):
             "embed_features1": feat1.cpu(),
             "embed_features2": feat2.cpu(),
         }
-        self.results_dict = results_dict
+        self.test_step_outputs.append(results_dict)
         return results_dict
 
-    def on_test_epoch_end(self, outputs: List[Dict[str, torch.Tensor]]):
-        outputs = self.all_gather(outputs)
+    def on_test_epoch_end(self):
+        outputs = self.test_step_outputs
         if self.trainer.global_rank == 0:
             epoch_results: Dict[str, np.ndarray] = {}
             for key in outputs[0].keys():
@@ -246,6 +247,7 @@ class SphereClassifier(LightningModule):
     #             result = outputs[key]
     #             epoch_results[key] = result.detach().cpu().numpy()
     #         np.savez_compressed(self.test_results_fp, **epoch_results)
+    
 def train(
     df: pd.DataFrame,
     args: argparse.Namespace,
