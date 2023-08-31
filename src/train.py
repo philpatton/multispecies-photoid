@@ -265,8 +265,8 @@ def train(
     callbacks = [LearningRateMonitor("epoch")]
     if optuna_trial is not None:
         callbacks.append(PyTorchLightningPruningCallback(optuna_trial, "val/mapNone"))
-    # if args.save_checkpoint:
-    #     callbacks.append(ModelCheckpoint(out_dir, save_last=True, save_top_k=0))
+    if args.save_checkpoint:
+        callbacks.append(ModelCheckpoint(out_dir, save_last=True, save_top_k=0))
     
     # ignore validation loop if fold==-1
     if fold == -1:
