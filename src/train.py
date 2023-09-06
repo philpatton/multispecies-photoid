@@ -276,6 +276,7 @@ def train(
 
     trainer = Trainer(
         accelerator='gpu',
+        strategy='ddp_find_unused_parameters_true',
         max_epochs=cfg["max_epochs"],
         logger=loggers,
         callbacks=callbacks,
